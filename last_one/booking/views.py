@@ -49,15 +49,14 @@ def create_event(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
-    all_fields = []
     db_book = DataBaseBooking()
+    col_names = db_book.get_table(request.user.username)[1]
     all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
-    if not db_book.if_table(request.user.username):
-        # all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]    
+    if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
     else:
-        # db_book.drop(table_name='user')
-        return render(request, 'create_event.html', {'message': 'Exists', 'fields': all_fields})
+        
+        return render(request, 'create_event.html', {'message': 'Exists', 'fields': col_names[1:], 'output': col_names})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:

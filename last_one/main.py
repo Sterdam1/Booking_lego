@@ -42,6 +42,12 @@ class DataBaseBooking:
         
         return some_sql.fetchall()
     
+    def get_table(self, table_name):
+        with self.db as con:
+            some_sql = con.execute(f"PRAGMA table_info('{table_name}')")
+            column_names = [i[1] for i in some_sql.fetchall()]
+            return table_name, column_names
+
     def drop(self, table_name):
         with self.db as con:
             some_sql = con.execute(f"DROP TABLE {table_name}")
