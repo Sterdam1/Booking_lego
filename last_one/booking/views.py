@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
-from .models import Profile
+from .models import Profile, NewField
 from django.contrib.auth.models import User
 
 def index(request):
@@ -43,4 +43,12 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+def create_event(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]
+
+    return render(request, 'create_event.html',{'fields': all_fields})
 
