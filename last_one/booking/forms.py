@@ -4,9 +4,8 @@ from django.contrib.auth.models import User
 from .models import Profile
 from django.core.exceptions import ValidationError
 
-class FieldForm(forms.Form):
-    field_count = forms.IntegerField(label='Количество полей')
-
+# class FieldForm(forms.Form):
+#     field_count = forms.IntegerField(label='Количество полей')
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField()

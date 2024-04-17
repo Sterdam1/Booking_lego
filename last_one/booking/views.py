@@ -49,20 +49,28 @@ def create_event(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
-    all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]
+    db_book = DataBaseBooking()
+    if not db_book.if_table(request.user.username):
+        all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]
 
-    return render(request, 'create_event.html',{'fields': all_fields})
+        return render(request, 'create_event.html',{'fields': all_fields})
+
+    else:
+        return render(request, 'create_event.html', {'message': 'Exists'})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
     fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]
-    try:
-        db_book = DataBaseBooking()
-        db_book.create_table(fields, request.user.username)
-        return render(request, 'create_event_conformation.html',{'message': "Успех"})
-    except Exception as e:
-        return render(request, 'create_event_conformation.html',{'message': e})
+    if fields:
+        try:
+            db_book = DataBaseBooking()
+            db_book.create_table(fields, request.user.username)
+            return render(request, 'create_event_conformation.html',{'message': "Успех"})
+        except Exception as e:
+            return render(request, 'create_event_conformation.html',{'message': e})
+    else: 
+        return render(request, 'create_event.html',{'fields': ['У вас нет созданных полей', 'Создайте их в административной панели']})
 
 

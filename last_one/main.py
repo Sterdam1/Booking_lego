@@ -24,6 +24,12 @@ class DataBase:
 class DataBaseBooking:
     def __init__(self):
         self.db = sl.connect('db_booking.sqlite3')
+
+    def if_table(self, table_name):
+        with self.db as con:
+            some_sql = con.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+        return some_sql.fetchall()
+
     def create_table(self, listy, table_name):
         string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, "
         for l in range(len(listy)):

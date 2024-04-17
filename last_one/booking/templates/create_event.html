@@ -9,19 +9,29 @@
     <h1>Welcome to the Create even Page!</h1>
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}!</p>
-        <h1>Вот ваши поля. Хотите создать для них таблицу?</h1>
-        
-        {% for f in fields %}
-            <p>{{ f }}</p>
-        {% endfor %}
+        {% if message != 'Exists' %}
+            {% if fields %}
+            <h1>Вот ваши поля. Хотите создать для них таблицу?</h1>
+            {% for f in fields %}
+                <p>{{ f }}</p>
+            {% endfor %}
+            <form action="{% url 'create_event_conformation' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Generate SQL</button>
+                </form>
+            {% else %}
+                <h1>Вы не создали ни одного поля!</h1>
+            {% endif %}
+            
+        {% else %}
+            <h1>Вот ваша таблица!</h1>
+        {% endif %}
 
-        <form action="{% url 'create_event_conformation' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Generate SQL</button>
-         </form>
         <a href="{% url 'index' %}">
-            <div class="back">Назад</div>
+                <div class="back">Назад</div>
         </a>
+
+        
         <p> </p>
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}

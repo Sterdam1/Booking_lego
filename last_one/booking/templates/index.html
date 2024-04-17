@@ -9,13 +9,13 @@
     <h1>Welcome to the Home Page!</h1>
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}!</p>
-        <a href="{% url 'login' %}">
+        <a href="#">
             <div class="is-user">Заказать бронивароние</div>
         </a>
         {% if user.is_staff %}
-        <a href="{% url 'create_event' %}">
-            <div class="is-staff">Создать ивент</div>
-        </a>
+            <a href="{% url 'create_event' %}">
+                <div class="is-staff">Создать ивент</div>
+            </a>        
         {% endif %}
 
         <form action="{% url 'logout' %}" method="post">
