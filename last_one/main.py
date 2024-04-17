@@ -18,7 +18,7 @@ class DataBase:
         return string+')'
 
     def drop(self, table_name):
-        with db as con:
+        with self.db as con:
             some_sql = con.execute(f"DROP TABLE {table_name}")
 
 class DataBaseBooking:
@@ -41,6 +41,10 @@ class DataBaseBooking:
             con.commit()
         
         return some_sql.fetchall()
+    
+    def drop(self, table_name):
+        with self.db as con:
+            some_sql = con.execute(f"DROP TABLE {table_name}")
 
 # db = DataBase()
 # db_book = DataBaseBooking()
@@ -48,4 +52,4 @@ class DataBaseBooking:
 # with db as con:
 #     some_sql = con.execute(create_sql(['name', 'time', 'price'], 'my_table'))
 
-# drop('my_table')
+

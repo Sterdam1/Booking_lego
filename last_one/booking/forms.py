@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, NewField
 from django.core.exceptions import ValidationError
 
 # class FieldForm(forms.Form):
@@ -19,3 +19,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['username', 'email', 'password']
+
+class NewFieldForm(forms.ModelForm):
+    class Meta:
+        model = NewField
+        fields = ['field_name']
