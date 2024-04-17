@@ -64,3 +64,5 @@ def create_event_conformation(request):
         return render(request, 'create_event_conformation.html',{'message': "Успех"})
     except Exception as e:
         return render(request, 'create_event_conformation.html',{'message': e})
+
+
