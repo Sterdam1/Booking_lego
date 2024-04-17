@@ -50,13 +50,21 @@ def create_event(request):
         return redirect('login')
     
     db_book = DataBaseBooking()
+
+    values = []
+    if request.method == 'POST':
+        
+        for field_name in request.POST:
+            value = request.POST[field_name]
+            values.append(value)
+        
+    
     col_names = db_book.get_table(request.user.username)[1]
     all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
-    else:
-        
-        return render(request, 'create_event.html', {'message': 'Exists', 'fields': col_names[1:], 'output': col_names})
+    else:   
+        return render(request, 'create_event.html', {'table': True, 'fields': col_names[1:], 'message': values[1:]})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:

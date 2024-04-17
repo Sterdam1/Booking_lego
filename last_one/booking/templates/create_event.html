@@ -9,7 +9,7 @@
     <h1>Welcome to the Create even Page!</h1>
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}!</p>
-        {% if message != 'Exists' %}
+        {% if not table %}
             {% if fields %}
             <h1>Вот ваши поля. Хотите создать для них таблицу?</h1>
             {% for f in fields %}
@@ -33,7 +33,7 @@
                 {% endfor %}
                 <button type="submit">Отправить</button>
 
-            <p>{{ output }}</p>
+            <p>{{ message }}</p>
             </form>
         {% endif %}
 
