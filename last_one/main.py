@@ -42,6 +42,13 @@ class DataBaseBooking:
         
         return some_sql.fetchall()
     
+    def edit_table_row(self, table_name, id, data):
+        with self.db as con:
+            col_names = ', '.join(self.get_col_names(table_name)[1:])
+            format_data = ', '.join([f"'{d}'" for d in data])
+            some_sql = con.execute(f"UPDATE {table_name} SET ({col_names}) = ({format_data}) WHERE id = {id}")
+
+
     def get_table_data(self, table_name):
         # comment: надо сделать так чтобы человек видел то что сейчас ввел. 
         # то есть табличка идет снизу вверх 

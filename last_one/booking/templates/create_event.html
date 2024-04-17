@@ -37,10 +37,32 @@
                             <input type="text" id="{{ field_name }}" name="{{ field_name }}"><br>
                         {% endif %}
                     {% endfor %}
-                    <button type="submit">Отправить</button>
+                    <button type="submit" name="button-send">Отправить</button>
                 </form>
                 <form method="post">
+                    
                     <p>Изменить запись</p>
+                    {% csrf_token %}
+                    {% for field_name in fields %}
+                        {% if field_name != 'id' %}
+                            <label for="{{ field_name }}">{{ field_name }}</label><br>
+                            <input type="text" id="{{ field_name }}" name="{{ field_name }}"><br>
+                        {% endif %}
+                    {% endfor %}
+                    <label>id</label><br>
+                    <input list="options" name="option">
+                    <datalist id="options">
+                        {% for id in ids %}
+                            <option value="{{id}}">
+                        {% endfor %}
+                    </datalist>
+                    <!-- <select name="ids">
+                        {% for id in ids %}
+                            <option>{{ id }}</option>
+                        {% endfor %}
+                    </select> -->
+                    <!-- <input type="number"> -->
+                    <button type="submit" name="button-edit">Изменить</button>
                 </form>
             </div>
             <br>
@@ -62,7 +84,7 @@
                 <!-- <p>{{ message }}</p> -->
             
         {% endif %}
-
+        <p>{{help}}</p>
         <a href="{% url 'index' %}">
                 <div class="back">Назад</div>
         </a>
