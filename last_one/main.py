@@ -48,6 +48,9 @@ class DataBaseBooking:
             format_data = ', '.join([f"'{d}'" for d in data])
             some_sql = con.execute(f"UPDATE {table_name} SET ({col_names}) = ({format_data}) WHERE id = {id}")
 
+    def delete_row(self, table_name, id):
+        with self.db as con:
+            some_sql = con.execute(f"DELETE FROM {table_name} WHERE id = {id}")
 
     def get_table_data(self, table_name):
         # comment: надо сделать так чтобы человек видел то что сейчас ввел. 

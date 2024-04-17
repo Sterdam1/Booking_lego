@@ -53,23 +53,22 @@ def create_event(request):
 
     values = []
     if request.method == 'POST':
+        for field_name in request.POST:
+            value = request.POST[field_name]
+            values.append(value)
+        values.pop(-1)
         if 'button-send' in request.POST:
-            for field_name in request.POST:
-                value = request.POST[field_name]
-                values.append(value)
             db_book.insert_info(request.user.username, values[1:])
         elif 'button-edit' in request.POST:
-            for field_name in request.POST:
-                value = request.POST[field_name]
-                values.append(value)
-            values.pop(-1)
             db_book.edit_table_row(request.user.username, values[-1], values[1:-1])
+        elif 'button-del' in request.POST:
+            db_book.delete_row(request.user.username, values[-1])
         
     col_names = db_book.get_col_names(request.user.username)
     all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
-    else:   
+    else:
         # db_book.drop(request.user.username)
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]

@@ -66,6 +66,17 @@
                 </form>
             </div>
             <br>
+            <form method="post">
+                {% csrf_token %}
+                <input list="options" name="option">
+                    <datalist id="options">
+                        {% for id in ids %}
+                            <option value="{{id}}">
+                        {% endfor %}
+                    </datalist>
+                <button type="submit" name="button-del">Удалить</button>
+                </form>
+            <br>
             <table border="1">
                 <tr>
                     {% for field_name in fields %}
