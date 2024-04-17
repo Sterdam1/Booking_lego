@@ -15,7 +15,7 @@ class DataBase:
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
 
-        return string+')'
+        return string+'is_taken INTEGER)'
 
     def drop(self, table_name):
         with self.db as con:
@@ -34,7 +34,7 @@ class DataBaseBooking:
         string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, "
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
-        string += ')'
+        string += ', is_taken INTEGER)'
 
         with self.db as con:
             some_sql = con.execute(string)
@@ -42,6 +42,14 @@ class DataBaseBooking:
         
         return some_sql.fetchall()
     
+    def get_table_data(self, table_name):
+        # comment: надо сделать так чтобы человек видел то что сейчас ввел. 
+        # то есть табличка идет снизу вверх 
+        with self.db as con:
+            some_sql = con.execute(f"SELECT * FROM {table_name}")
+
+        return some_sql.fetchall()
+
     def get_col_names(self, table_name):
         with self.db as con:
             some_sql = con.execute(f"PRAGMA table_info('{table_name}')")

@@ -1,0 +1,7 @@
+.form-container {
+    display: flex;
+}
+
+.form-container form {
+    margin-right: 10px;
+}

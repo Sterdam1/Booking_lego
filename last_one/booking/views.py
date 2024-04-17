@@ -64,7 +64,11 @@ def create_event(request):
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
     else:   
-        return render(request, 'create_event.html', {'table': True, 'fields': col_names[1:], 'message': values[1:]})
+        # db_book.drop(request.user.username)
+        table = db_book.get_table_data(request.user.username)
+        row_l = len(table[0]) 
+        return render(request, 'create_event.html', {'table': True, 'fields': col_names,
+                                                    'data': table, 'row_l': len(table[0])})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:
@@ -75,6 +79,7 @@ def create_event_conformation(request):
         try:
             db_book = DataBaseBooking()
             db_book.create_table(fields, request.user.username)
+
             return render(request, 'create_event_conformation.html',{'message': "Успех"})
         except Exception as e:
             return render(request, 'create_event_conformation.html',{'message': e})
