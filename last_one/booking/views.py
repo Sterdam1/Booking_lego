@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
 from .models import Profile, NewField
 from django.contrib.auth.models import User
+from main import DataBase, DataBaseBooking
 
 def index(request):
     if not request.user.is_authenticated:
@@ -52,3 +53,14 @@ def create_event(request):
 
     return render(request, 'create_event.html',{'fields': all_fields})
 
+def create_event_conformation(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]
+    try:
+        db_book = DataBaseBooking()
+        db_book.create_table(fields, request.user.username)
+        return render(request, 'create_event_conformation.html',{'message': "Успех"})
+    except Exception as e:
+        return render(request, 'create_event_conformation.html',{'message': e})
