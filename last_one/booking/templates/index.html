@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to the Home Page!</h1>
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+        <a href="">
+            <div class="is-user">Заказать бронивароние</div>
+        </a>
+        {% if user.is_staff %}
+        <a href="">
+            <div class="is-staff">Создать ивент</div>
+        </a>
+        {% endif %}
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <p>Please <a href="{% url 'login' %}">login</a>.</p>
+    {% endif %}
+</body>
+</html>
