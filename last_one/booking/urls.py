@@ -10,4 +10,5 @@ urlpatterns = [
     path('create_event_conformation/', views.create_event_conformation, name='create_event_conformation'),
     path('services/', views.choose_service, name='choose_service'),
     path('table/<str:table_name>/', views.table_view, name='table_view'), 
+    path('booking_conformtion/', views.booking_conformtion, name='booking_conformtion')
 ]
