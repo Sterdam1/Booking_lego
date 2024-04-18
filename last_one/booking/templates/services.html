@@ -6,22 +6,24 @@
     <title>Home</title>
 </head>
 <body>
-    <h1>Домашняя страница</h1>
+    <h1>Выбирайте услугу</h1>
     {% if user.is_authenticated %}
         <p>Привет, {{ user.username }}!</p>
-        <a href="{% url 'choose_service' %}">
-            <div class="is-user">Заказать бронивароние</div>
+        <a href="#">
+            <div>Тут будут ивенты</div>
         </a>
-        {% if user.is_staff %}
-            <a href="{% url 'create_event' %}">
-                <div class="is-staff">Создать ивент</div>
-            </a>        
-        {% endif %}
-
+        <br>
+        
+        <a href="{% url 'index' %}">
+            <div class="back">Назад</div>
+        </a>
+        <br>
+        
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Logout</button>
         </form>
+        <br>
     {% else %}
         <p>Please <a href="{% url 'login' %}">login</a>.</p>
     {% endif %}

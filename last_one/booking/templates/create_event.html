@@ -10,7 +10,7 @@
 <body>
     <h1>Welcome to the Create even Page!</h1>
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}!</p>
+        <p>Привет, {{ user.username }}!</p>
         {% if not table %}
             {% if fields %}
             <h1>Вот ваши поля. Хотите создать для них таблицу?</h1>
@@ -99,9 +99,8 @@
         <a href="{% url 'index' %}">
                 <div class="back">Назад</div>
         </a>
-
+        <br>
         
-        <p> </p>
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Logout</button>

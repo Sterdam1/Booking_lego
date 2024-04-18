@@ -45,6 +45,12 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
+def choose_service(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    return render(request, 'services.html')
+
 def create_event(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -54,6 +60,7 @@ def create_event(request):
     values = []
     if request.method == 'POST':
         for field_name in request.POST:
+            # comment: Потом наверное переделать список в словарь
             value = request.POST[field_name]
             values.append(value)
         values.pop(-1)
@@ -69,12 +76,11 @@ def create_event(request):
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
     else:
-        # db_book.drop(request.user.username)
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
                                                     'data': table, 'row_l': len(table[0]), 
-                                                    'help': values, 'ids': ids})
+                                                    'help': request.POST, 'ids': ids})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:
