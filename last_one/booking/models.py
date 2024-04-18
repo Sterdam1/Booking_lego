@@ -17,3 +17,12 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.username
+
+# Модель для того чтобы узнать кто что бронировал 
+class BookingInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    event = models.CharField(max_length=100)
+    book_id = models.IntegerField()
+
+    def __str__(self):
+        return self.user + ' booked someting in ' + self.event
