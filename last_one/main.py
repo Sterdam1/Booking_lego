@@ -86,6 +86,12 @@ class DataBaseBooking:
             format_data = ', '.join([f"'{d}'" for d in data])
             some_sql = con.execute(f"INSERT INTO {table_name} ({col_names}) VALUES ({format_data})")
 
+    def get_row_by_status(self, table_name, status, user_id):
+        with self.db as con:
+            some_sql = con.execute(f"SELECT * FROM {table_name} WHERE status = {status} and is_taken = {user_id}")
+            formated_sql = [list(i) for i in some_sql.fetchall()]
+        return formated_sql
+
     def drop(self, table_name):
             with self.db as con:
                 some_sql = con.execute(f"DROP TABLE {table_name}")

@@ -59,9 +59,8 @@ def choose_service(request):
 # захочет вернуться то стрелками он врядли это сделает
 def table_view(request, table_name):
     db_book = DataBaseBooking()
-    global table_data
     col_names = db_book.get_col_names(table_name)
-    row = [0, 1]
+    units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
     #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     if request.method == "POST":
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
@@ -78,15 +77,17 @@ def table_view(request, table_name):
             # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
             # что-то в этом духе
             # я гандон и не нарисовал ничего простите(  
-                
-            pass
+            units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
+            for u in units_to_book:
+                row = change_flag(table_data, u[0], 2)
+                db_book.edit_table_row(table_name, row[0], row[1:])
         
         
     else:
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
-                                                        "table_data": table_data}, 'help': [table_name, row[0], row[:1]],
+                                                        "table_data": table_data}, 'help': units_to_book,
                                                         "current_user": request.user.id, 'temp': temp_list})
 
 def booking_conformtion(request):
