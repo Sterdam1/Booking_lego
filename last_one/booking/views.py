@@ -55,12 +55,14 @@ def choose_service(request):
 
     return render(request, 'services.html', {'data' : all_tables_data})
 
+# Спросить у дениса про то что когда я тыкаю на кнопку у меня по факту новая страница и типа есть пользователь 
+# захочет вернуться то стрелками он врядли это сделает
 def table_view(request, table_name):
     db_book = DataBaseBooking()
     global table_data
     col_names = db_book.get_col_names(table_name)
     
-
+    #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     if request.method == "POST":
         id = request.POST.get('id')[0]
         for item in table_data:
@@ -69,7 +71,6 @@ def table_view(request, table_name):
                 break
     else:
         table_data = [list(i)for i in db_book.get_table_data(table_name)]
-        # return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, "table_data": table_data}}) 
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, "table_data": table_data}, 'help':request.POST})
 
