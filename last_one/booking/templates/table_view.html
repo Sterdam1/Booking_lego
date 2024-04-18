@@ -14,7 +14,9 @@
         {% for row in data.table_data %}
             <form action="{% url 'table_view' data.table_name %}" method="post">
                 {% csrf_token %}
-                <div class="record {% if row|last > 0 %}inactive{% endif %}">
+                <!-- comment: к сожалению я не смог понять как сделать чтобы занятую штуку сделал серой 
+                    и мог делать там где нажмаю кнопку зеленой  -->
+                <div class="record {% if row|last == user.id %}booking{% endif %}">
                     {% for item in row %}
                         {% if item != row|last %}
                         <span>{{ item }}</span>
@@ -24,13 +26,26 @@
                     <!-- comment: Выключает нахуй кнопку и поле, надо будет изменить чтоб можно было отменить 
                     То есть включить обратно -->
                     {% if row|last <= 0 %}
-                        <button type="submit" name='book-1'>Бронивароть</button>
+                        <button type="submit" name='button-book'>Бронивароть</button>
+                    {% elif row|last == user.id %}
+                        <button type="submit" name="button-cancel">Отменить</button>
                     {% endif %}
                 </div>
             </form>
         {% endfor %}
-        <p>{{data.table_data}}</p>
-        <p>{{help}}</p>
+        <button type="button" name="button-book-final">Завершить бронирование</button>
+        
     </div>
+    <p>{{data.table_data}}</p>
+    <p>{{help}}</p>
+    <a href="{% url 'index' %}">
+        <div class="back">Назад</div>
+    </a>
+    <br>
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
 </body>
 </html>

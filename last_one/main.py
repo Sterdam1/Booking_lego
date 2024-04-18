@@ -4,6 +4,7 @@ import sqlite3 as sl
 
 # db = sl.connect('last_one\db.sqlite3', check_same_thread=False)
 table_data = []
+temp_list = []
 
 
 class DataBase:

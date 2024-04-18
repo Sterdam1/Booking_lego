@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
 from .models import Profile, NewField
 from django.contrib.auth.models import User
-from main import DataBaseBooking, table_data
+from main import DataBaseBooking, table_data, temp_list
 
 def index(request):
     if not request.user.is_authenticated:
@@ -65,14 +65,25 @@ def table_view(request, table_name):
     #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     if request.method == "POST":
         id = request.POST.get('id')[0]
-        for item in table_data:
-            if item[0] == int(id):
-                item[-1] = 1
-                break
+        if 'button-book' in request.POST:
+            table_data, row = change_flag(table_data, id, request.user.id)
+            temp_list.append(row)
+        elif 'button-cancel' in request.POST:
+            table_data, row = change_flag(table_data, id, 0)
+            temp_list.remove(row)
+        elif 'button-book-final' in request.POST:
+            # comment: тут надо будет записывать в базу юзеров их забронированные места
+            # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
+            # что-то в этом духе
+            # я гандон и не нарисовал ничего простите(  
+            pass
+        
     else:
         table_data = [list(i)for i in db_book.get_table_data(table_name)]
 
-    return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, "table_data": table_data}, 'help':request.POST})
+    return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
+                                                        "table_data": table_data}, 'help':temp_list,
+                                                        "current_user": request.user.id})
 
 def create_event(request):
     if not request.user.is_authenticated:
@@ -121,4 +132,12 @@ def create_event_conformation(request):
     else: 
         return render(request, 'create_event.html',{'fields': ['У вас нет созданных полей', 'Создайте их в административной панели']})
 
+
+def change_flag(table_data, id, id_to):
+    for item in table_data:
+                if item[0] == int(id):
+                    item[-1] = 1*id_to*(id_to >= 1)
+                    row = item
+                    break
+    return table_data, row
 

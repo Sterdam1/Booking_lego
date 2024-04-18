@@ -14,3 +14,7 @@
 .inactive {
     background-color: lightgray; /* Цвет фона для неактивного дива */
 }
+
+.booking {
+    background-color: rgb(0, 255, 170);
+}
