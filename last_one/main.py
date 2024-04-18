@@ -3,6 +3,7 @@
 import sqlite3 as sl
 
 # db = sl.connect('last_one\db.sqlite3', check_same_thread=False)
+table_data = []
 
 
 class DataBase:
@@ -66,6 +67,18 @@ class DataBaseBooking:
             column_names = [i[1] for i in some_sql.fetchall()]
             return column_names
 
+    def get_all_tables(self):
+        with self.db as con:
+            table_data = {}
+            some_sql = con.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+            table_names = [sql[0] for sql in some_sql.fetchall()]
+        for t in table_names:
+            data = self.get_table_data(t)
+            cols = self.get_col_names(t)
+            table_data[t] = {'col_names': cols, 'data': data}
+
+        return table_data
+
     def insert_info(self, table_name, data):
         with self.db as con:
             col_names = ', '.join(self.get_col_names(table_name)[1:])
@@ -75,7 +88,8 @@ class DataBaseBooking:
     def drop(self, table_name):
             with self.db as con:
                 some_sql = con.execute(f"DROP TABLE {table_name}")
-
+                
+    
 # db = DataBase()
 # db_book = DataBaseBooking()
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css\main.css.' %}">
+    <title>{{ data.table_name }}</title>
+</head>
+<body>  
+    <h1>{{ data.table_name }}</h1> 
+    <div id="data-container">
+        {% for row in data.table_data %}
+            <form action="{% url 'table_view' data.table_name %}" method="post">
+                {% csrf_token %}
+                <div class="record {% if row|last > 0 %}inactive{% endif %}">
+                    {% for item in row %}
+                        {% if item != row|last %}
+                        <span>{{ item }}</span>
+                        <input type="hidden" name="id" value="{{ row.0 }}">
+                        {% endif %}
+                    {% endfor %}
+                    {% if row|last <= 0 %}
+                        <button type="submit" name='book-1'>Бронивароть</button>
+                    {% endif %}
+                </div>
+            </form>
+        {% endfor %}
+        <p>{{data.table_data}}</p>
+        <p>{{help}}</p>
+    </div>
+</body>
+</html>

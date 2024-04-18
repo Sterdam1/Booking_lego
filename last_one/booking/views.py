@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
 from .models import Profile, NewField
 from django.contrib.auth.models import User
-from main import DataBase, DataBaseBooking
+from main import DataBaseBooking, table_data
 
 def index(request):
     if not request.user.is_authenticated:
@@ -49,7 +49,29 @@ def choose_service(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
-    return render(request, 'services.html')
+    db_book = DataBaseBooking()
+
+    all_tables_data = [name for name in db_book.get_all_tables()]
+
+    return render(request, 'services.html', {'data' : all_tables_data})
+
+def table_view(request, table_name):
+    db_book = DataBaseBooking()
+    global table_data
+    col_names = db_book.get_col_names(table_name)
+    
+
+    if request.method == "POST":
+        id = request.POST.get('id')[0]
+        for item in table_data:
+            if item[0] == int(id):
+                item[-1] = 1
+                break
+    else:
+        table_data = [list(i)for i in db_book.get_table_data(table_name)]
+        # return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, "table_data": table_data}}) 
+
+    return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, "table_data": table_data}, 'help':request.POST})
 
 def create_event(request):
     if not request.user.is_authenticated:

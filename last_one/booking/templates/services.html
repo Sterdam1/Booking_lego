@@ -13,7 +13,29 @@
             <div>Тут будут ивенты</div>
         </a>
         <br>
-        
+
+        {% for d in data %}
+            <a href="{% url 'table_view' d %}">
+                <div>{{d}}</div>
+            </a>
+        {% endfor %}
+
+        <!-- <table border="1">
+            <tr>
+                {% for col in data.user.col_names %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in data.user.data %}
+                <tr>
+                    {% for item in row %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table> -->
+        <br>
+
         <a href="{% url 'index' %}">
             <div class="back">Назад</div>
         </a>
@@ -24,6 +46,7 @@
             <button type="submit">Logout</button>
         </form>
         <br>
+
     {% else %}
         <p>Please <a href="{% url 'login' %}">login</a>.</p>
     {% endif %}
