@@ -61,32 +61,32 @@ def table_view(request, table_name):
     db_book = DataBaseBooking()
     global table_data
     col_names = db_book.get_col_names(table_name)
-    
+    row = [0, 1]
     #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     if request.method == "POST":
-        # не использовать оперативу вообще
+        table_data = [list(i) for i in db_book.get_table_data(table_name)]
         if 'id' in request.POST:
             id = request.POST.get('id')[0]
         if 'button-book' in request.POST:
-            table_data = change_flag(table_data, id, 1, request.user.id)
-            # temp_list.append(row)
+            row = change_flag(table_data, id, 1, request.user.id)
+            db_book.edit_table_row(table_name, row[0], row[1:])
         elif 'button-cancel' in request.POST:
-            table_data = change_flag(table_data, id, 0, 0)
-            # temp_list.remove(row)
-        elif 'button-book-final' in request.POST:
+            row = change_flag(table_data, id, 0, 0)
+            db_book.edit_table_row(table_name, row[0], row[1:])
+        if 'button-book-final' in request.POST:
             # comment: тут надо будет записывать в базу юзеров их забронированные места
             # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
             # что-то в этом духе
             # я гандон и не нарисовал ничего простите(  
-            # return render(request, 'booking_conformtion.html', {'data': table_data, "col_names": col_names,
-            #                                                     'table_name': table_name, 'temp': temp_list})
+                
             pass
+        
         
     else:
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
-                                                        "table_data": table_data}, 'help':request.POST,
+                                                        "table_data": table_data}, 'help': [table_name, row[0], row[:1]],
                                                         "current_user": request.user.id, 'temp': temp_list})
 
 def booking_conformtion(request):
@@ -146,7 +146,7 @@ def change_flag(table_data, id, status_to, id_to=None):
                 item[-2] = status_to
                 if id_to is not None:
                     item[-1] = id_to*(id_to >= 1)
-                # row = item
+                row = item
                 break
-    return table_data #row
+    return row
 
