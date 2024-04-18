@@ -17,7 +17,7 @@ class DataBase:
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
 
-        return string+'is_taken INTEGER)'
+        return string+'status INTEGER, is_taken INTEGER)'
 
     def drop(self, table_name):
         with self.db as con:
@@ -36,7 +36,7 @@ class DataBaseBooking:
         string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, "
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
-        string += ', is_taken INTEGER)'
+        string += ', status INTEGER, is_taken INTEGER)'
 
         with self.db as con:
             some_sql = con.execute(string)

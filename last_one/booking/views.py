@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
-from .models import Profile, NewField
+from .models import Profile, NewField, BookingInfo
 from django.contrib.auth.models import User
 from main import DataBaseBooking, table_data, temp_list
 
@@ -64,26 +64,33 @@ def table_view(request, table_name):
     
     #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     if request.method == "POST":
-        id = request.POST.get('id')[0]
+        # не использовать оперативу вообще
+        if 'id' in request.POST:
+            id = request.POST.get('id')[0]
         if 'button-book' in request.POST:
-            table_data, row = change_flag(table_data, id, request.user.id)
-            temp_list.append(row)
+            table_data = change_flag(table_data, id, 1, request.user.id)
+            # temp_list.append(row)
         elif 'button-cancel' in request.POST:
-            table_data, row = change_flag(table_data, id, 0)
-            temp_list.remove(row)
+            table_data = change_flag(table_data, id, 0, 0)
+            # temp_list.remove(row)
         elif 'button-book-final' in request.POST:
             # comment: тут надо будет записывать в базу юзеров их забронированные места
             # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
             # что-то в этом духе
             # я гандон и не нарисовал ничего простите(  
+            # return render(request, 'booking_conformtion.html', {'data': table_data, "col_names": col_names,
+            #                                                     'table_name': table_name, 'temp': temp_list})
             pass
         
     else:
-        table_data = [list(i)for i in db_book.get_table_data(table_name)]
+        table_data = [list(i) for i in db_book.get_table_data(table_name)]
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
-                                                        "table_data": table_data}, 'help':temp_list,
-                                                        "current_user": request.user.id})
+                                                        "table_data": table_data}, 'help':request.POST,
+                                                        "current_user": request.user.id, 'temp': temp_list})
+
+def booking_conformtion(request):
+    pass
 
 def create_event(request):
     if not request.user.is_authenticated:
@@ -104,7 +111,7 @@ def create_event(request):
             db_book.edit_table_row(request.user.username, values[-1], values[1:-1])
         elif 'button-del' in request.POST:
             db_book.delete_row(request.user.username, values[-1])
-        
+
     col_names = db_book.get_col_names(request.user.username)
     all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
     if not db_book.if_table(request.user.username):  
@@ -113,7 +120,7 @@ def create_event(request):
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 'row_l': len(table[0]), 
+                                                    'data': table, 
                                                     'help': request.POST, 'ids': ids})
 
 def create_event_conformation(request):
@@ -133,11 +140,13 @@ def create_event_conformation(request):
         return render(request, 'create_event.html',{'fields': ['У вас нет созданных полей', 'Создайте их в административной панели']})
 
 
-def change_flag(table_data, id, id_to):
+def change_flag(table_data, id, status_to, id_to=None):
     for item in table_data:
-                if item[0] == int(id):
-                    item[-1] = 1*id_to*(id_to >= 1)
-                    row = item
-                    break
-    return table_data, row
+            if item[0] == int(id):
+                item[-2] = status_to
+                if id_to is not None:
+                    item[-1] = id_to*(id_to >= 1)
+                # row = item
+                break
+    return table_data #row
 
