@@ -78,9 +78,11 @@ def table_view(request, table_name):
             # что-то в этом духе
             # я гандон и не нарисовал ничего простите(  
             units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
-            for u in units_to_book:
-                row = change_flag(table_data, u[0], 2)
-                db_book.edit_table_row(table_name, row[0], row[1:])
+            # for u in units_to_book:
+            #     row = change_flag(table_data, u[0], 2)
+            #     db_book.edit_table_row(table_name, row[0], row[1:])
+            # units_to_book = db_book.get_row_by_status(table_name, 2, request.user.id)
+            return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name})
         
         
     else:
@@ -90,8 +92,28 @@ def table_view(request, table_name):
                                                         "table_data": table_data}, 'help': units_to_book,
                                                         "current_user": request.user.id, 'temp': temp_list})
 
-def booking_conformtion(request):
-    pass
+def booking_conformation(request, table_name):
+    db_book = DataBaseBooking()
+    if request.method == "POST":
+        table_data = [list(i) for i in db_book.get_table_data(table_name)]
+        units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
+
+        if 'id' in request.POST:
+            id = request.POST.get('id')[0]
+        if 'button-book' in request.POST:
+            row = change_flag(units_to_book, id, 1, request.user.id)
+            db_book.edit_table_row(table_name, row[0], row[1:])
+        elif 'button-cancel' in request.POST:
+            row = change_flag(units_to_book, id, 0, 0)
+            db_book.edit_table_row(table_name, row[0], row[1:])
+        if 'button-book-conformation' in request.POST:
+            units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
+            for u in units_to_book:
+                row = change_flag(units_to_book, u[0], 2)
+                db_book.edit_table_row(table_name, row[0], row[1:])
+            return render(request, 'booking_conformation.html', {'ready': True, 'data': units_to_book, 'table_name': table_name})
+
+        return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name})
 
 def create_event(request):
     if not request.user.is_authenticated:

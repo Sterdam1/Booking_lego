@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подтверждение бронирования</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css\main.css.' %}">
+</head>
+<body>
+    <h2>Подтверждение бронирования</h2>
+    <p>Вы выбрали вот это:</p>
+    {% if not ready %}
+        <div id="data-container">
+            {% for row in data %}
+                <form action="{% url 'booking_conformation' table_name %}" method="post">
+                    {% csrf_token %}
+                    <div class="record {% if row|last == user.id %}booking{% endif %}">
+                        {% for item in row %}
+                            {% if not forloop.last %}
+                            <span>{{ item }}</span>
+                            <input type="hidden" name="id" value="{{ row.0 }}">
+                            {% endif %}
+                        {% endfor %}
+                        {% if row|last <= 0 %}
+                            <button type="submit" name='button-book'>Бронивароть</button>
+                        {% elif row|last == user.id %}
+                            <button type="submit" name="button-cancel">Отменить</button>
+                        {% endif %}
+                    </div>
+                
+                </form>
+            {% endfor %}  
+            <form action="{% url 'booking_conformation' table_name %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="button-book-conformation">Забронировать, точно уже я готов и все сделал</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Бронивроние закончено!</p>
+    {% endif %}
+    <p>{{data}}</p>
+    <a href="{% url 'index' %}">
+        <div class="back">Назад</div>
+    </a>
+    <br>
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+</body>
+</html> 
