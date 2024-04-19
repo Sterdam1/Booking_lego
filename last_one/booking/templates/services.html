@@ -9,10 +9,6 @@
     <h1>Выбирайте услугу</h1>
     {% if user.is_authenticated %}
         <p>Привет, {{ user.username }}!</p>
-        <a href="#">
-            <div>Тут будут ивенты</div>
-        </a>
-        <br>
 
         {% for d in data %}
             <a href="{% url 'table_view' d %}">
@@ -20,20 +16,6 @@
             </a>
         {% endfor %}
 
-        <!-- <table border="1">
-            <tr>
-                {% for col in data.user.col_names %}
-                    <th>{{ col }}</th>
-                {% endfor %}
-            </tr>
-            {% for row in data.user.data %}
-                <tr>
-                    {% for item in row %}
-                        <td>{{ item }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table> -->
         <br>
 
         <a href="{% url 'index' %}">
