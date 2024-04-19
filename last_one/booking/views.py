@@ -62,6 +62,7 @@ def table_view(request, table_name):
     col_names = db_book.get_col_names(table_name)
     units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
     #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
+    values= []
     if request.method == "POST":
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
         if 'id' in request.POST:
@@ -72,6 +73,10 @@ def table_view(request, table_name):
         elif 'button-cancel' in request.POST:
             row = change_flag(table_data, id, 0, 0)
             db_book.edit_table_row(table_name, row[0], row[1:])
+        elif 'button-sort' in request.POST:
+            sort_by = dict(request.POST)['option'][0]
+            table_data = db_book.sort_table(table_name, sort_by)
+            # pass
         if 'button-book-final' in request.POST:
             # comment: тут надо будет записывать в базу юзеров их забронированные места
             # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
@@ -89,7 +94,7 @@ def table_view(request, table_name):
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
-                                                        "table_data": table_data}, 'help': units_to_book,
+                                                        "table_data": table_data}, 'help': request.POST,
                                                         "current_user": request.user.id, 'temp': temp_list})
 
 def booking_conformation(request, table_name):

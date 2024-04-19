@@ -10,6 +10,17 @@
 </head>
 <body>  
     <h1>{{ data.table_name }}</h1> 
+
+    <form method="post">
+        {% csrf_token %}
+        <input list="options" name="option">
+            <datalist id="options">
+                {% for name in data.col_names %}
+                    <option value="{{ name }}">
+                {% endfor %}
+            </datalist>
+        <button type="submit" name="button-sort">Сортировать</button>
+        </form>
     <div id="data-container">
         {% for row in data.table_data %}
             <form action="{% url 'table_view' data.table_name %}" method="post">
@@ -32,6 +43,7 @@
                
             </form>
         {% endfor %}
+        <p>{{help}}</p>
         <p>{{temp}}</p>
         <form action="{% url 'table_view' data.table_name %}" method="post">
             {% csrf_token %}
