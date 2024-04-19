@@ -27,9 +27,6 @@
             
         {% else %}
             <h1>Вот ваша таблица!</h1>
-            {% if form_error == 'isnotdigit' %}
-                <p style="color: red;">В формы удалить или изменить нужно писать только цифры</p>
-            {% endif %}
             <div class="form-container">
                 <form method="post">
                     <p>Создать запись</p>
@@ -65,8 +62,6 @@
                 {% endif %}
             </div>
             <br>
-            <p>Удалить запись</p>
-            <label>id</label><br>
             <form method="post">
                 {% csrf_token %}
                 <input list="options" name="option">
