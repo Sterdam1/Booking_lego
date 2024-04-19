@@ -10,7 +10,9 @@
 </head>
 <body>  
     <h1>{{ data.table_name }}</h1> 
-
+    {% if form_error == 'nosuchcol' %}
+        <p style="color: red;">Нет такого фильтра, выберите из предложенных</p>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         <input list="options" name="option">

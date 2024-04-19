@@ -61,8 +61,8 @@ def table_view(request, table_name):
     db_book = DataBaseBooking()
     col_names = db_book.get_col_names(table_name)
     units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
-    #comment: Кусок кода меняет в словаре is_taken с 0 на 1. Думаю изменить на id user"а который меняет, но это не сейчас. 
     values= []
+    form_error = ''
     if request.method == "POST":
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
         if 'id' in request.POST:
@@ -75,8 +75,11 @@ def table_view(request, table_name):
             db_book.edit_table_row(table_name, row[0], row[1:])
         elif 'button-sort' in request.POST:
             sort_by = dict(request.POST)['option'][0]
-            table_data = db_book.sort_table(table_name, sort_by)
-            # pass
+            if sort_by in col_names:   
+                table_data = db_book.sort_table(table_name, sort_by)
+            else:
+                form_error = 'nosuchcol'
+
         if 'button-book-final' in request.POST:
             # comment: тут надо будет записывать в базу юзеров их забронированные места
             # user_id | username | event(название таблицы откуда это) | book_id(юнит бронирования) |
@@ -95,7 +98,7 @@ def table_view(request, table_name):
 
     return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
                                                         "table_data": table_data}, 'help': request.POST,
-                                                        "current_user": request.user.id, 'temp': temp_list})
+                                                        "current_user": request.user.id, 'form_error': form_error})
 
 def booking_conformation(request, table_name):
     db_book = DataBaseBooking()
@@ -126,6 +129,10 @@ def create_event(request):
     
     db_book = DataBaseBooking()
 
+    col_names = db_book.get_col_names(request.user.username)
+    all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
+    
+    form_error = ''
     values = []
     if request.method == 'POST':
         for field_name in request.POST:
@@ -133,23 +140,26 @@ def create_event(request):
             value = request.POST[field_name]
             values.append(value)
         values.pop(-1)
-        if 'button-send' in request.POST:
-            db_book.insert_info(request.user.username, values[1:])
-        elif 'button-edit' in request.POST:
-            db_book.edit_table_row(request.user.username, values[-1], values[1:-1])
-        elif 'button-del' in request.POST:
-            db_book.delete_row(request.user.username, values[-1])
+        if values != []:
+            if 'button-send' in request.POST:
+                db_book.insert_info(request.user.username, values[1:])
+            elif 'option' in request.POST:
+                if request.POST['option'][0].isdigit():
+                    if 'button-edit' in request.POST:
+                        db_book.edit_table_row(request.user.username, request.POST['option'][0], values[1:-1])
+                    elif 'button-del' in request.POST:
+                        db_book.delete_row(request.user.username, request.POST['option'][0])
+                else:
+                    form_error = 'isnotdigit'
 
-    col_names = db_book.get_col_names(request.user.username)
-    all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
     else:
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 
-                                                    'help': request.POST, 'ids': ids})
+                                                    'data': table, 'help': [values[1:-2], request.POST],
+                                                    'ids': ids, 'form_error': form_error})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:
