@@ -45,7 +45,6 @@
                
             </form>
         {% endfor %}
-        <p>{{help}}</p>
         <p>{{temp}}</p>
         <form action="{% url 'table_view' data.table_name %}" method="post">
             {% csrf_token %}

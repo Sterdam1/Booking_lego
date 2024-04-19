@@ -109,8 +109,9 @@ def booking_conformation(request, table_name):
         if 'id' in request.POST:
             id = request.POST.get('id')[0]
         if 'button-book' in request.POST:
-            row = change_flag(units_to_book, id, 1, request.user.id)
+            row = change_flag(table_data, id, 1, request.user.id)
             db_book.edit_table_row(table_name, row[0], row[1:])
+            units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
         elif 'button-cancel' in request.POST:
             row = change_flag(units_to_book, id, 0, 0)
             db_book.edit_table_row(table_name, row[0], row[1:])
@@ -119,9 +120,9 @@ def booking_conformation(request, table_name):
             for u in units_to_book:
                 row = change_flag(units_to_book, u[0], 2)
                 db_book.edit_table_row(table_name, row[0], row[1:])
-            return render(request, 'booking_conformation.html', {'ready': True, 'data': units_to_book, 'table_name': table_name})
+            return render(request, 'booking_conformation.html', {'ready': '', 'data': units_to_book, 'table_name': table_name })
 
-        return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name})
+        return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name, 'help': request.POST})
 
 def create_event(request):
     if not request.user.is_authenticated:
@@ -179,6 +180,7 @@ def create_event_conformation(request):
 
 
 def change_flag(table_data, id, status_to, id_to=None):
+    rows = None
     for item in table_data:
             if item[0] == int(id):
                 item[-2] = status_to
@@ -186,5 +188,5 @@ def change_flag(table_data, id, status_to, id_to=None):
                     item[-1] = id_to*(id_to >= 1)
                 row = item
                 break
-    return row
+    return row 
 
