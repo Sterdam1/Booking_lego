@@ -33,7 +33,7 @@ class DataBaseBooking:
         return some_sql.fetchall()
 
     def create_table(self, listy, table_name):
-        string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, "
+        string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, unit_id INTEGER, start_time TEXT, "
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
         string += ', status INTEGER, is_taken INTEGER)'
@@ -90,6 +90,14 @@ class DataBaseBooking:
         with self.db as con:
             some_sql = con.execute(f"SELECT * FROM {table_name} WHERE status = {status} and is_taken = {user_id}")
             formated_sql = [list(i) for i in some_sql.fetchall()]
+        return formated_sql
+
+    def sort_table(self, table_name, sort_by, asc=True):
+        order = "ASC" if asc else "DESC"
+        with self.db as con:
+            some_sql = con.execute(f"SELECT * FROM {table_name} ORDER BY {sort_by} {order};")
+        formated_sql = [list(i) for i in some_sql.fetchall()]
+        
         return formated_sql
 
     def drop(self, table_name):
