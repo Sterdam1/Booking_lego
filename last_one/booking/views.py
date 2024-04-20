@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from .forms import UserProfileForm, CustomUserCreationForm
 from .models import Profile, NewField, BookingInfo
 from django.contrib.auth.models import User
-from main import DataBaseBooking, table_data, temp_list
+from main import DataBaseBooking
 
 def index(request):
     if not request.user.is_authenticated:
@@ -126,17 +126,32 @@ def booking_conformation(request, table_name):
 
 def my_booking(request):
     db_book = DataBaseBooking()
-    table = db_book.get_all_tables()
-    formated_table = []
-    temp_list = []
-    for t in table:
-        your_rows = db_book.get_row_by_status(t, 2, 8)
-        for d in your_rows:
-            cols_and_data = dict(zip(table[t]['col_names'], d))
-            temp_list.append(cols_and_data)
-        table_name = {t: temp_list}
-        formated_table.append(table_name)
-    return render(request, 'my_booking.html', {'tables': formated_table})
+    
+    # Comment: Сделал вроде историю бронирования. можно отменить. По идее надо сделать так чтобы можно 
+    # было обратно забронированить просто поменять sql запрос но это уже потом(когда потом бл?).
+    if request.method == "POST":
+        table = db_book.get_all_tables()
+        formated_table = format_table(request, 2, table, db_book)
+        if 'id' in request.POST:
+            id = request.POST.get('id')[0]
+            table_name = request.POST['button-cancel']
+            table_format = [list(i) for i in table[table_name]['data']]
+        # if 'button-book' in request.POST:
+        #     row = change_flag(table_format, id, 2, request.user.id)
+        #     db_book.edit_table_row(table_format, row[0], row[1:])
+        if 'button-cancel' in request.POST:
+            row = change_flag(table_format, id, 0, request.user.id)
+            db_book.edit_table_row(table_name, row[0], row[1:])
+        formated_table = format_table(request, 2, table, db_book)
+    else:
+        table = db_book.get_all_tables()
+        formated_table = format_table(request, 2, table, db_book)
+            
+        
+
+
+
+    return render(request, 'my_booking.html', {'tables': formated_table, 'help': request.POST})
 
 def create_event(request):
     if not request.user.is_authenticated:
@@ -194,7 +209,6 @@ def create_event_conformation(request):
 
 
 def change_flag(table_data, id, status_to, id_to=None):
-    rows = None
     for item in table_data:
             if item[0] == int(id):
                 item[-2] = status_to
@@ -202,5 +216,19 @@ def change_flag(table_data, id, status_to, id_to=None):
                     item[-1] = id_to*(id_to >= 1)
                 row = item
                 break
+    else:
+        row = f'Item ne naiden, {id} != {[item[0] for item in table_data]}, {table_data}'
     return row 
 
+def format_table(request, status, table, db_book):
+    formated_table = []
+    temp_list = []
+    for t in table:
+        your_rows = db_book.get_row_by_status(t, status, request.user.id)
+        for d in your_rows:
+            cols_and_data = dict(zip(table[t]['col_names'], d))
+            temp_list.append(cols_and_data)
+        table_name = {t: temp_list}
+        formated_table.append(table_name)
+    
+    return formated_table 

@@ -14,36 +14,37 @@
         <div id="data-container">
             {% for table_key, table_values in table.items %}
                 <h3>{{ table_key }}</h3>
-                <form action="{% url 'my_booking' %}" method="post">
-                    {% csrf_token %}
                     <div>
                         {% for row in table_values %}
-                            <div class="record">
-                                {% for key, value in row.items %}
-                                    {% if key not in "id,staus,is_taken" %}
-                                        <input type="hidden" name="id" value="{{ row.id }}">
-                                        <span>{{value}}</span>
+                            <form action="{% url 'my_booking' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ row.id }}">
+                                <div class="record">
+                                    {% for key, value in row.items %}
+                                        {% if key not in "id" %}
+                                            <span>{{value}}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if row.is_taken <= 0 %}
+                                        <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
+                                    {% elif row.is_taken == user.id %}
+                                        <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
                                     {% endif %}
-                                {% endfor %}
-                                {% if row.is_taken <= 0 %}
-                                    <button type="submit" name='button-book'>Бронивароть</button>
-                                {% elif row.is_taken == user.id %}
-                                    <button type="submit" name="button-cancel">Отменить</button>
-                                {% endif %}
-                            </div>
+                                </div>
+                            </form>
                         {% endfor %}
                     </div>
-                </form>
+                
             {% endfor %}
             <form action="{% url 'my_booking' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" name="button-book-final">Подтвердить изменения</button>
+                <button type="submit" name="button-book-final" >Подтвердить изменения</button>
             </form>          
         
         </div>
     {% endfor %}
     <p>{{table}}</p>
-    <!-- <p>{{help}}</p> -->
+    <p>{{help}}</p>
     <a href="{% url 'index' %}">
         <div class="back">Назад</div>
     </a>

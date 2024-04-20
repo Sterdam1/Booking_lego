@@ -18,6 +18,9 @@
             </a>        
         {% endif %}
 
+        <a href="{% url 'my_booking' %}">
+            <div>Мои брониварония</div>
+        </a>  
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Logout</button>
