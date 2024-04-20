@@ -120,9 +120,23 @@ def booking_conformation(request, table_name):
             for u in units_to_book:
                 row = change_flag(units_to_book, u[0], 2)
                 db_book.edit_table_row(table_name, row[0], row[1:])
-            return render(request, 'booking_conformation.html', {'ready': '', 'data': units_to_book, 'table_name': table_name })
+            return render(request, 'booking_conformation.html', {'ready': True, 'data': units_to_book, 'table_name': table_name })
 
         return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name, 'help': request.POST})
+
+def my_booking(request):
+    db_book = DataBaseBooking()
+    table = db_book.get_all_tables()
+    formated_table = []
+    temp_list = []
+    for t in table:
+        your_rows = db_book.get_row_by_status(t, 2, 8)
+        for d in your_rows:
+            cols_and_data = dict(zip(table[t]['col_names'], d))
+            temp_list.append(cols_and_data)
+        table_name = {t: temp_list}
+        formated_table.append(table_name)
+    return render(request, 'my_booking.html', {'tables': formated_table})
 
 def create_event(request):
     if not request.user.is_authenticated:

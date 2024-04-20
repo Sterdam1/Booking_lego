@@ -30,7 +30,7 @@
                 <!-- comment: к сожалению я не смог понять как сделать чтобы занятую штуку сделал серой 
                     и мог делать там где нажмаю кнопку зеленой  -->
                 <div class="record {% if row|last == user.id %}booking{% endif %}">
-                    {% for item in row %}
+                    {% for item in row|slice:"1:" %}
                         {% if not forloop.last %}
                         <span>{{ item }}</span>
                         <input type="hidden" name="id" value="{{ row.0 }}">
@@ -45,7 +45,6 @@
                
             </form>
         {% endfor %}
-        <p>{{temp}}</p>
         <form action="{% url 'table_view' data.table_name %}" method="post">
             {% csrf_token %}
             <button type="submit" name="button-book-final">Завершить бронирование</button>
@@ -54,7 +53,7 @@
         
     </div>
     <p>{{data.table_data}}</p>
-    <p>{{help}}</p>
+    <!-- <p>{{help}}</p> -->
     <a href="{% url 'index' %}">
         <div class="back">Назад</div>
     </a>
