@@ -9,42 +9,42 @@
     <title>Мои бронирования</title>
 </head>
 <body>  
-    <h1></h1> 
-    {% for table in tables %}
-        <div id="data-container">
-            {% for table_key, table_values in table.items %}
-                <h3>{{ table_key }}</h3>
-                    <div>
-                        {% for row in table_values %}
-                            <form action="{% url 'my_booking' %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="id" value="{{ row.id }}">
-                                <div class="record">
-                                    {% for key, value in row.items %}
-                                        {% if key not in "id" %}
-                                            <span>{{value}}</span>
+    <h1>Ваша бронь</h1> 
+    {% if check != 'no' %}
+        {% for table in tables %}
+            <div id="data-container">
+                {% for table_key, table_values in table.items %}
+                    <h3>{{ table_key }}</h3>
+                        <div>
+                            {% for row in table_values %}
+                                <form action="{% url 'my_booking' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ row.id }}">
+                                    <div class="record">
+                                        {% for key, value in row.items %}
+                                            {% if key not in "id" %}
+                                                <span>{{value}}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if row.is_taken <= 0 %}
+                                            <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
+                                        {% elif row.is_taken == user.id %}
+                                            <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
                                         {% endif %}
-                                    {% endfor %}
-                                    {% if row.is_taken <= 0 %}
-                                        <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
-                                    {% elif row.is_taken == user.id %}
-                                        <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
-                                    {% endif %}
-                                </div>
-                            </form>
-                        {% endfor %}
-                    </div>
-                
-            {% endfor %}
-            <form action="{% url 'my_booking' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" name="button-book-final" >Подтвердить изменения</button>
-            </form>          
-        
-        </div>
-    {% endfor %}
+                                    </div>
+                                </form>
+                            {% endfor %}
+                        </div>
+                    
+                {% endfor %}
+                    
+            </div>
+        {% endfor %}
+    {% else %}
+    <p>Вы ничего не бронировали</p>
+    {% endif %}
     <p>{{table}}</p>
-    <p>{{help}}</p>
+    <!-- <p>{{help}}</p> -->
     <a href="{% url 'index' %}">
         <div class="back">Назад</div>
     </a>

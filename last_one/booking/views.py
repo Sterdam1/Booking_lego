@@ -126,9 +126,12 @@ def booking_conformation(request, table_name):
 
 def my_booking(request):
     db_book = DataBaseBooking()
-    
+    formated_table = []
+    table = db_book.get_all_tables()
+    check = [db_book.get_row_by_status(t, 2, request.user.id) for t in table]
     # Comment: Сделал вроде историю бронирования. можно отменить. По идее надо сделать так чтобы можно 
     # было обратно забронированить просто поменять sql запрос но это уже потом(когда потом бл?).
+    
     if request.method == "POST":
         table = db_book.get_all_tables()
         formated_table = format_table(request, 2, table, db_book)
@@ -146,12 +149,19 @@ def my_booking(request):
     else:
         table = db_book.get_all_tables()
         formated_table = format_table(request, 2, table, db_book)
-            
         
+    count = 0    
+    for c in check:
+        if c == []:
+            count += 1     
+    if count == len(check):
+        check = 'no'
+    else:
+        check = ''    
 
 
 
-    return render(request, 'my_booking.html', {'tables': formated_table, 'help': request.POST})
+    return render(request, 'my_booking.html', {'tables': formated_table, 'help': request.POST, 'check': check})
 
 def create_event(request):
     if not request.user.is_authenticated:
