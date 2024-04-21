@@ -168,7 +168,7 @@ def create_event(request):
         return redirect('login')
     
     db_book = DataBaseBooking()
-
+    help = ''
     col_names = db_book.get_col_names(request.user.username)
     all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
     
@@ -191,8 +191,11 @@ def create_event(request):
                         db_book.delete_row(request.user.username, request.POST['option'][0])
                 else:
                     form_error = 'isnotdigit'
-        elif 'edit' in request.POST:
-            pass
+        if 'edit' in request.POST:
+            help = 'working'
+            for id, value in list(dict(request.POST).items())[1:-1]:
+                db_book.edit_table_row(request.user, id, value[1:])
+            
 
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
@@ -200,7 +203,7 @@ def create_event(request):
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 'help': request.POST,
+                                                    'data': table, 'help': help,
                                                     'ids': ids, 'form_error': form_error})
 
 def create_event_conformation(request):

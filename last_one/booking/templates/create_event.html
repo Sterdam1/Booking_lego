@@ -43,27 +43,6 @@
                     {% endfor %}
                     <button type="submit" name="button-send">Отправить</button>
                 </form>
-                {% if ids%}
-                <form method="post">
-                        <p>Изменить запись</p>
-                        {% csrf_token %}
-                        {% for field_name in fields %}
-                            {% if field_name != 'id' %}
-                                <label for="{{ field_name }}">{{ field_name }}</label><br>
-                                <input type="text" id="{{ field_name }}" name="{{ field_name }}"><br>
-                            {% endif %}
-                        {% endfor %}
-                        <label>id</label><br>
-                        <input list="options" name="option">
-                    
-                        <datalist id="options">
-                            {% for id in ids %}
-                                <option value="{{id}}">
-                            {% endfor %}
-                        </datalist>
-                    <button type="submit" name="button-edit">Изменить</button>
-                </form>
-                {% endif %}
             </div>
             <br>
             <p>Удалить запись</p>
@@ -90,9 +69,7 @@
                     {% for row in data %}
                     <tr>
                         {% for cell in row %}
-                        {% with column_name=fields|get_item:forloop.counter0 %}
-                        <td><input type="text" name="{{ forloop.parentloop.counter }};{{ column_name }}" value="{{ cell }}""></td>
-                        {% endwith %}
+                            <td><input type="text" name="{{ forloop.parentloop.counter }}" value="{{ cell }}""></td>
                         {% endfor %}
                     </tr>
                     {% endfor %}
