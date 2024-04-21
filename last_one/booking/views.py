@@ -60,8 +60,15 @@ def choose_service(request):
 def table_view(request, table_name):
     db_book = DataBaseBooking()
     col_names = db_book.get_col_names(table_name)
-    units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
-    values= []
+
+    newfieds = NewField.objects.filter(created_by=request.user.id)
+    choises = []
+    for field in newfieds:
+        for f in field.choise.all():
+            choises.append(f.choise) 
+
+    
+    values = []
     form_error = ''
     if request.method == "POST":
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
@@ -73,12 +80,12 @@ def table_view(request, table_name):
         elif 'button-cancel' in request.POST:
             row = change_flag(table_data, id, 0, 0)
             db_book.edit_table_row(table_name, row[0], row[1:])
-        elif 'button-sort' in request.POST:
-            sort_by = dict(request.POST)['option'][0]
-            if sort_by in col_names:   
-                table_data = db_book.sort_table(table_name, sort_by)
-            else:
-                form_error = 'nosuchcol'
+        # elif 'button-sort' in request.POST:
+        #     sort_by = dict(request.POST)['option'][0]
+        #     if sort_by in col_names:   
+        #         table_data = db_book.sort_table(table_name, sort_by)
+        #     else:
+        #         form_error = 'nosuchcol'
 
         if 'button-book-final' in request.POST:
             # comment: тут надо будет записывать в базу юзеров их забронированные места
@@ -86,19 +93,16 @@ def table_view(request, table_name):
             # что-то в этом духе
             # я гандон и не нарисовал ничего простите(  
             units_to_book = db_book.get_row_by_status(table_name, 1, request.user.id)
-            # for u in units_to_book:
-            #     row = change_flag(table_data, u[0], 2)
-            #     db_book.edit_table_row(table_name, row[0], row[1:])
-            # units_to_book = db_book.get_row_by_status(table_name, 2, request.user.id)
             return render(request, 'booking_conformation.html', {'data': units_to_book, 'table_name': table_name})
         
         
     else:
         table_data = [list(i) for i in db_book.get_table_data(table_name)]
-
-    return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names, 
-                                                        "table_data": table_data}, 'help': request.POST,
-                                                        "current_user": request.user.id, 'form_error': form_error})
+        
+    table_groups = db_book.table_groups(table_name, choises)
+    return render(request, 'table_view.html', {'data': {"table_name": table_name, "col_names": col_names}, 
+                                                        'help': request.POST, "current_user": request.user.id, 
+                                                        'form_error': form_error, 'table_groups': table_groups})
 
 def booking_conformation(request, table_name):
     db_book = DataBaseBooking()

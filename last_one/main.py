@@ -44,6 +44,20 @@ class DataBaseBooking:
         
         return some_sql.fetchall()
     
+    def table_groups(self, table_name, groups):
+        formated_sql = {}
+        with self.db as con:
+            col_names = self.get_col_names(table_name)
+            for col_name in col_names[3:-2]:
+                for group in groups:
+                    some_sql = con.execute(f"SELECT * FROM {table_name} WHERE {col_name} = '{group}'").fetchall()
+                    if some_sql != []:
+                        formated_sql[group] = some_sql
+
+                        
+        return formated_sql   
+                 
+
     def edit_table_row(self, table_name, id, data):
         with self.db as con:
             col_names = ', '.join(self.get_col_names(table_name)[1:])
