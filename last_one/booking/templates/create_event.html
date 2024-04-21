@@ -39,13 +39,12 @@
                     {% for field_name in fields %}
                         {% if field_name != 'id' %}
                             {% if field_name in choises%}
-                                <label for="{{ field_name }}">{{ field_name }}</label><br>
-                                <input list="{{field_name}}" name="{{field_name}}"><br>
-                                    <datalist id="{{field_name}}">
-                                        {% for choise in choises|get_item:field_name %}
-                                            <option value="{{ choise }}">
-                                        {% endfor %}
-                                    </datalist>                            
+                                <label for="{{ field_name }}">{{ field_name }}</label><br>                
+                                <select style="width: 177px; height: 21px;" id="{{field_name}}" name="{{field_name}}" >
+                                    {% for choise in choises|get_item:field_name %}
+                                        <option value="{{ choise }}">{{ choise }}</option>
+                                    {% endfor %}
+                                </select> <br>                          
                             {% else %}
                                 <label for="{{ field_name }}">{{ field_name }}</label><br>
                                 <input type="text" id="{{ field_name }}" name="{{ field_name }}"><br>
@@ -80,14 +79,20 @@
                     {% for row in data %}
                     <tr>
                         {% for cell in row %}
-                            <!-- <input list="options" name="option">
-                            <datalist id="options">
-                                {% for id in ids %}
-                                    <option value="{{id}}">
-                                {% endfor %}
-                            </datalist> -->
-                        
-                            <td><input type="text" name="{{ forloop.parentloop.counter }}" value="{{ cell }}""></td>                       
+                            {% with fields|get_item:forloop.counter0 as field_name  %}
+                                {% if field_name in choises %}                           
+                                    <td><select  style="width: 177px; height: 21px;" id="{{field_name}}" name="{{forloop.parentloop.counter}}" >
+                                        <option value="{{ cell }}" selected>{{ cell }}</option>
+                                        {% for choise in choises|get_item:field_name %}
+                                            {% if choise != cell%}
+                                                <option value="{{ choise }}">{{ choise }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></td>
+                                {% else %}
+                                    <td><input type="text" name="{{ forloop.parentloop.counter }}" value="{{ cell }}"></td>                       
+                                {% endif %}
+                            {% endwith %}
                         {% endfor %}
                     </tr>
                     {% endfor %}
@@ -98,7 +103,7 @@
                 <!-- <p>{{ message }}</p> -->
             
         {% endif %}
-        
+        <p>{{help}}</p>
         <a href="{% url 'index' %}">
                 <div class="back">Назад</div>
         </a>

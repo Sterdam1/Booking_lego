@@ -209,7 +209,7 @@ def create_event(request):
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 'help': choises,
+                                                    'data': table, 'help': request.POST,
                                                     'ids': ids, 'form_error': form_error,
                                                     'choises': choises})
 
