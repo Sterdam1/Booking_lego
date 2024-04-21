@@ -81,7 +81,7 @@
                         {% for cell in row %}
                             {% with fields|get_item:forloop.counter0 as field_name  %}
                                 {% if field_name in choises %}                           
-                                    <td><select  style="width: 177px; height: 21px;" id="{{field_name}}" name="{{forloop.parentloop.counter}}" >
+                                    <td><select style="width: 177px; height: 21px;" id="{{field_name}}" name="{{forloop.parentloop.counter}}" >
                                         <option value="{{ cell }}" selected>{{ cell }}</option>
                                         {% for choise in choises|get_item:field_name %}
                                             {% if choise != cell%}
