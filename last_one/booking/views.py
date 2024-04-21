@@ -191,6 +191,8 @@ def create_event(request):
                         db_book.delete_row(request.user.username, request.POST['option'][0])
                 else:
                     form_error = 'isnotdigit'
+        elif 'edit' in request.POST:
+            pass
 
     if not db_book.if_table(request.user.username):  
         return render(request, 'create_event.html',{'fields': all_fields})
@@ -198,7 +200,7 @@ def create_event(request):
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 'help': [values[1:-2], request.POST],
+                                                    'data': table, 'help': request.POST,
                                                     'ids': ids, 'form_error': form_error})
 
 def create_event_conformation(request):

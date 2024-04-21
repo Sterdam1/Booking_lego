@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ваши ивенты</title>
     {% load static %}
+    {% load my_tags %}
     <link rel="stylesheet" type="text/css" href="{% static 'css\main.css.' %}">
 </head>
 <body>
@@ -78,21 +79,27 @@
                 <button type="submit" name="button-del">Удалить</button>
                 </form>
             <br>
-            <table border="1">
-                <tr>
-                    {% for field_name in fields %}
-                        <th>{{ field_name }}</th>
+            <form method="post" action="">
+                {% csrf_token %}
+                <table border="1">
+                    <tr>
+                        {% for field_name in fields %}
+                            <th>{{ field_name }}</th>
+                        {% endfor %}
+                    </tr>
+                    {% for row in data %}
+                    <tr>
+                        {% for cell in row %}
+                        {% with column_name=fields|get_item:forloop.counter0 %}
+                        <td><input type="text" name="{{ forloop.parentloop.counter }};{{ column_name }}" value="{{ cell }}""></td>
+                        {% endwith %}
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-                {% for row in data %}
-                <tr>
-                    {% for cell in row %}
-                    <td>{{ cell }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
-            <br>
+                </table>
+                <br>
+                <button type="submit" name="edit"> Подтвердить изменения</button>
+            </form>
                 <!-- <p>{{ message }}</p> -->
             
         {% endif %}
