@@ -168,10 +168,16 @@ def create_event(request):
         return redirect('login')
     
     db_book = DataBaseBooking()
-    help = ''
-    col_names = db_book.get_col_names(request.user.username)
-    all_fields = [i.field_name for i in NewField.objects.filter(created_by=request.user.id)]   
+    newfieds = NewField.objects.filter(created_by=request.user.id)
+    choises = {}
+    for field in newfieds:
+        choises[field.field_name] = [f.choise for f in field.choise.all()]
     
+
+    col_names = db_book.get_col_names(request.user.username)
+    all_fields = [i.field_name for i in newfieds]   
+    
+    help = ''
     form_error = ''
     values = []
     if request.method == 'POST':
@@ -196,15 +202,16 @@ def create_event(request):
             for id, value in list(dict(request.POST).items())[1:-1]:
                 db_book.edit_table_row(request.user, id, value[1:])
             
-
+    # db_book.drop('user')
     if not db_book.if_table(request.user.username):  
-        return render(request, 'create_event.html',{'fields': all_fields})
+        return render(request, 'create_event.html',{'fields': all_fields, 'help': choises})
     else:
         table = db_book.get_table_data(request.user.username)
         ids = [t[0] for t in table]
         return render(request, 'create_event.html', {'table': True, 'fields': col_names,
-                                                    'data': table, 'help': help,
-                                                    'ids': ids, 'form_error': form_error})
+                                                    'data': table, 'help': choises,
+                                                    'ids': ids, 'form_error': form_error,
+                                                    'choises': choises})
 
 def create_event_conformation(request):
     if not request.user.is_authenticated:

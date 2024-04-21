@@ -26,9 +26,9 @@
                                                 <span>{{value}}</span>
                                             {% endif %}
                                         {% endfor %}
-                                        {% if row.is_taken <= 0 %}
+                                        {% if row|last <= 0 %}
                                             <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
-                                        {% elif row.is_taken == user.id %}
+                                        {% elif row|last == user.id %}
                                             <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
                                         {% endif %}
                                     </div>
