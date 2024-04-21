@@ -17,7 +17,7 @@ class DataBase:
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
 
-        return string+'status INTEGER, is_taken INTEGER)'
+        return string+'status INTEGER, booked_by_user INTEGER)'
 
     def drop(self, table_name):
         with self.db as con:
@@ -36,7 +36,7 @@ class DataBaseBooking:
         string = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY, unit_id INTEGER, start_time TEXT, "
         for l in range(len(listy)):
             string += listy[l] + ' TEXT' + ', '*(l != len(listy)-1)
-        string += ', status INTEGER, is_taken INTEGER)'
+        string += ', status INTEGER, booked_by_user INTEGER)'
 
         with self.db as con:
             some_sql = con.execute(string)
@@ -88,7 +88,7 @@ class DataBaseBooking:
 
     def get_row_by_status(self, table_name, status, user_id):
         with self.db as con:
-            some_sql = con.execute(f"SELECT * FROM {table_name} WHERE status = {status} and is_taken = {user_id}")
+            some_sql = con.execute(f"SELECT * FROM {table_name} WHERE status = {status} and booked_by_user = {user_id}")
             formated_sql = [list(i) for i in some_sql.fetchall()]
         return formated_sql
 
