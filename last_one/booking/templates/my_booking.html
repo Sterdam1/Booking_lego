@@ -14,31 +14,32 @@
         {% for table in tables %}
             <div id="data-container">
                 {% for table_key, table_values in table.items %}
-                    <h3>{{ table_key }}</h3>
-                        <div>
-                            {% for row in table_values %}
-                                <form action="{% url 'my_booking' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="id" value="{{ row.id }}">
-                                    <div class="record">
-                                        {% for key, value in row.items %}
-                                            {% if key not in "id" %}
-                                                <span>{{value}}</span>
-                                            {% endif %}
-                                            <!-- <p>{{key}}</p> -->
-                                            {% if key == 'booked_by_user'%}
-                                                {% if value <= 0 %}
-                                                    <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
-                                                {% elif value == user.id %}
-                                                    <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
+                    {% if table_values %} 
+                        <h3>{{ table_key }}</h3>
+                            <div>
+                                {% for row in table_values %}
+                                    <form action="{% url 'my_booking' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="id" value="{{ row.id }}">
+                                        <div class="record">
+                                            {% for key, value in row.items %}
+                                                {% if key not in "id" %}
+                                                    <span>{{value}}</span>
                                                 {% endif %}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                </form>
-                            {% endfor %}
-                        </div>
-                    
+                                                <!-- <p>{{key}}</p> -->
+                                                {% if key == 'booked_by_user'%}
+                                                    {% if value <= 0 %}
+                                                        <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
+                                                    {% elif value == user.id %}
+                                                        <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </form>
+                                {% endfor %}
+                            </div>
+                    {% endif %}   
                 {% endfor %}
                     
             </div>

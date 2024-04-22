@@ -154,7 +154,8 @@ def my_booking(request):
         table = db_book.get_all_tables()
         formated_table = format_table(request, 2, table, db_book)
         
-    count = 0    
+    count = 0 
+    check_temp = check   
     for c in check:
         if c == []:
             count += 1     
@@ -165,7 +166,7 @@ def my_booking(request):
 
 
 
-    return render(request, 'my_booking.html', {'tables': formated_table, 'help': request.POST, 'check': check})
+    return render(request, 'my_booking.html', {'tables': formated_table, 'help': check_temp, 'check': check})
 
 def create_event(request):
     if not request.user.is_authenticated:
@@ -256,5 +257,5 @@ def format_table(request, status, table, db_book):
             temp_list.append(cols_and_data)
         table_name = {t: temp_list}
         formated_table.append(table_name)
-    
+        temp_list = []
     return formated_table 
