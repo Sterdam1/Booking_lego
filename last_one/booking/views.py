@@ -61,7 +61,7 @@ def table_view(request, table_name):
     db_book = DataBaseBooking()
     col_names = db_book.get_col_names(table_name)
 
-    newfieds = NewField.objects.filter(created_by=request.user.id)
+    newfieds = NewField.objects.filter(created_by__username=table_name)
     choises = []
     for field in newfieds:
         for f in field.choise.all():
