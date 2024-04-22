@@ -147,7 +147,7 @@ def my_booking(request):
         #     row = change_flag(table_format, id, 2, request.user.id)
         #     db_book.edit_table_row(table_format, row[0], row[1:])
         if 'button-cancel' in request.POST:
-            row = change_flag(table_format, id, 0, request.user.id)
+            row = change_flag(table_format, id, 0, 0)
             db_book.edit_table_row(table_name, row[0], row[1:])
         formated_table = format_table(request, 2, table, db_book)
     else:

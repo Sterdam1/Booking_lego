@@ -25,12 +25,15 @@
                                             {% if key not in "id" %}
                                                 <span>{{value}}</span>
                                             {% endif %}
+                                            <!-- <p>{{key}}</p> -->
+                                            {% if key == 'booked_by_user'%}
+                                                {% if value <= 0 %}
+                                                    <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
+                                                {% elif value == user.id %}
+                                                    <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
+                                                {% endif %}
+                                            {% endif %}
                                         {% endfor %}
-                                        {% if row|last <= 0 %}
-                                            <button type="submit" name='button-book' value="{{table_key}}">Бронивароть</button>
-                                        {% elif row|last == user.id %}
-                                            <button type="submit" name="button-cancel" value="{{table_key}}">Отменить</button>
-                                        {% endif %}
                                     </div>
                                 </form>
                             {% endfor %}
